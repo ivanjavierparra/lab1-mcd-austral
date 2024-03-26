@@ -106,34 +106,46 @@ dir.create("./exp/HT2020/", showWarnings = FALSE)
 archivo_salida <- "./exp/HT2020/gridsearch.txt"
 
 # genero la data.table donde van los resultados del Grid Search
-tb_grid_search <- data.table( max_depth = integer(),
+tb_grid_search <- data.table( cp = integer(),
+                              max_depth = integer(),
                               min_split = integer(),
+                              min_bucket = integer(),
                               ganancia_promedio = numeric() )
 
 
+i <- 1
+
+
 # itero por los loops anidados para cada hiperparametro
-for ( vcp in c(-3, -2, -1, -0.5) )
+for ( vcp in c(-10, -9, -8,-7,-6,-5,-4,-3,-2,-1,-0.5, -0.25) )
 {
-  for (vmax_depth in c(4, 5, 6, 7, 8, 10, 12, 14)) {
-    for (vmin_split in c( 10, 20, 40, 80, 100, 200, 300, 400, 600, 800, 1000, 1200)) 
+  for (vmax_depth in c(5, 6, 7, 8, 9, 10, 11)) {
+    for (vmin_split in c(  10, 20, 30,40, 50,60, 70, 80, 100, 200, 300, 400, 500, 600, 700, 800, 900, 1000, 1100, 1200, 1500, 2000 )) 
     {
       # notar como se agrega
-      
+      minbucket <- vmin_split/2
       # vminsplit  minima cantidad de registros en un nodo para hacer el split
       param_basicos <- list(
         "cp" = vcp, # complejidad minima
         "minsplit" = vmin_split,
-        "minbucket" = vmin_split*2, # minima cantidad de registros en una hoja
+        "minbucket" = minbucket, # minima cantidad de registros en una hoja
         "maxdepth" = vmax_depth
       ) # profundidad máxima del arbol
       
+      
+      cat("Corrida n°: " ,i, "\n")
       # Un solo llamado, con la semilla 17
-      ganancia_promedio <- ArbolesMontecarlo(PARAM$semillas, param_basicos)
+      ganancia_promedio <- ArbolEstimarGanancia(PARAM$semillas, param_basicos)
+      
+      cat("Ganancia_promedio: ", ganancia_promedio, "\n")
+      
+      
+      i <- i + 1
       
       # agrego a la tabla
       tb_grid_search <- rbindlist( 
         list( tb_grid_search, 
-              list( vmax_depth, vmin_split, ganancia_promedio) ) )
+              list( vcp, vmax_depth, vmin_split, minbucket, ganancia_promedio) ) )
     }
     
     # escribo la tabla a disco en cada vuelta del loop mas externo
