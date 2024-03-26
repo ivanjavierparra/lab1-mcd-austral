@@ -122,30 +122,33 @@ for ( vcp in c(-10, -9, -8,-7,-6,-5,-4,-3,-2,-1,-0.5, -0.25) )
   for (vmax_depth in c(5, 6, 7, 8, 9, 10, 11)) {
     for (vmin_split in c(  10, 20, 30,40, 50,60, 70, 80, 100, 200, 300, 400, 500, 600, 700, 800, 900, 1000, 1100, 1200, 1500, 2000 )) 
     {
-      # notar como se agrega
-      minbucket <- vmin_split/2
-      # vminsplit  minima cantidad de registros en un nodo para hacer el split
-      param_basicos <- list(
-        "cp" = vcp, # complejidad minima
-        "minsplit" = vmin_split,
-        "minbucket" = minbucket, # minima cantidad de registros en una hoja
-        "maxdepth" = vmax_depth
-      ) # profundidad máxima del arbol
-      
-      
-      cat("Corrida n°: " ,i, "\n")
-      # Un solo llamado, con la semilla 17
-      ganancia_promedio <- ArbolEstimarGanancia(PARAM$semillas, param_basicos)
-      
-      cat("Ganancia_promedio: ", ganancia_promedio, "\n")
-      
-      
-      i <- i + 1
-      
-      # agrego a la tabla
-      tb_grid_search <- rbindlist( 
-        list( tb_grid_search, 
-              list( vcp, vmax_depth, vmin_split, minbucket, ganancia_promedio) ) )
+      for( min_bucket in seq(vmin_split, vmin_split/2, by = -100) ) 
+      {
+        
+        
+        # vminsplit  minima cantidad de registros en un nodo para hacer el split
+        param_basicos <- list(
+          "cp" = vcp, # complejidad minima
+          "minsplit" = vmin_split,
+          "minbucket" = min_bucket, # minima cantidad de registros en una hoja
+          "maxdepth" = vmax_depth
+        ) # profundidad máxima del arbol
+        
+        
+        cat("Corrida n°: " ,i, "\n")
+        # Un solo llamado, con la semilla 17
+        ganancia_promedio <- ArbolEstimarGanancia(PARAM$semillas, param_basicos)
+        
+        cat("Ganancia_promedio: ", ganancia_promedio, "\n")
+        
+        
+        i <- i + 1
+        
+        # agrego a la tabla
+        tb_grid_search <- rbindlist( 
+          list( tb_grid_search, 
+                list( vcp, vmax_depth, vmin_split, min_bucket, ganancia_promedio) ) )
+      }
     }
     
     # escribo la tabla a disco en cada vuelta del loop mas externo
