@@ -78,7 +78,7 @@ ArbolesMontecarlo <- function(semillas, param_basicos) {
                         semillas, # paso el vector de semillas
                         MoreArgs = list(param_basicos), # aqui paso el segundo parametro
                         SIMPLIFY = FALSE,
-                        mc.cores = 5 # en Windows este valor debe ser 1
+                        mc.cores = 1 # en Windows este valor debe ser 1
   )
   
   ganancia_promedio <- mean(unlist(ganancias))
@@ -89,11 +89,11 @@ ArbolesMontecarlo <- function(semillas, param_basicos) {
 #------------------------------------------------------------------------------
 
 # Aqui se debe poner la carpeta de la computadora local
-setwd("c:\\Users\\iparra\\Downloads\\Data Science\\lab1\\") # Establezco el Working Directory
+setwd("c:\\Users\\Usuario\\Documents\\Universidad\\austral\\2024\\lab1\\repos\\lab1-mcd-austral\\rpart\\") # Establezco el Working Directory
 # cargo los datos
 
 # cargo los datos
-dataset <- fread("./datasets/dataset_pequeno.csv")
+dataset <- fread("c:\\Users\\Usuario\\Documents\\Universidad\\austral\\2024\\lab1\\competencia\\datasets\\dataset_pequeno.csv")
 
 # trabajo solo con los datos con clase, es decir 202107
 dataset <- dataset[clase_ternaria != ""]
@@ -116,13 +116,15 @@ tb_grid_search <- data.table( cp = integer(),
 i <- 1
 
 
+PARAM$semillas[1]
+
 # itero por los loops anidados para cada hiperparametro
 for ( vcp in c(-10, -9, -8,-7,-6,-5,-4,-3,-2,-1,-0.5, -0.25) )
 {
   for (vmax_depth in c(5, 6, 7, 8, 9, 10, 11)) {
     for (vmin_split in c(  10, 20, 30,40, 50,60, 70, 80, 100, 200, 300, 400, 500, 600, 700, 800, 900, 1000, 1100, 1200, 1500, 2000 )) 
     {
-      for( min_bucket in seq(vmin_split, vmin_split/2, by = -100) ) 
+      for( vmin_bucket in seq(vmin_split, vmin_split/2, by = -100) ) 
       {
         
         
@@ -130,15 +132,16 @@ for ( vcp in c(-10, -9, -8,-7,-6,-5,-4,-3,-2,-1,-0.5, -0.25) )
         param_basicos <- list(
           "cp" = vcp, # complejidad minima
           "minsplit" = vmin_split,
-          "minbucket" = min_bucket, # minima cantidad de registros en una hoja
+          "minbucket" = vmin_bucket, # minima cantidad de registros en una hoja
           "maxdepth" = vmax_depth
         ) # profundidad máxima del arbol
         
         
         cat("Corrida n°: " ,i, "\n")
         # Un solo llamado, con la semilla 17
-        ganancia_promedio <- ArbolEstimarGanancia(PARAM$semillas, param_basicos)
+        ganancia_promedio <- ArbolesMontecarlo(PARAM$semillas, param_basicos)
         
+        #cat("Ganancia_promedio: ", ganancia_promedio, "\n", vcp, vmin_split, vmin_bucket, vmax_depth)
         cat("Ganancia_promedio: ", ganancia_promedio, "\n")
         
         
@@ -147,7 +150,7 @@ for ( vcp in c(-10, -9, -8,-7,-6,-5,-4,-3,-2,-1,-0.5, -0.25) )
         # agrego a la tabla
         tb_grid_search <- rbindlist( 
           list( tb_grid_search, 
-                list( vcp, vmax_depth, vmin_split, min_bucket, ganancia_promedio) ) )
+                list( vcp, vmax_depth, vmin_split, vmin_bucket, ganancia_promedio) ) )
       }
     }
     
