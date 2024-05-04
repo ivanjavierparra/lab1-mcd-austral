@@ -15,7 +15,6 @@ A continuación indicamos lo que contiene cada carpeta:
 
 
 Link a nuestro diccionario de datos:
-[https://docs.google.com/spreadsheets/d/1Q3bwKUq7Aer1BsMPRhfGDShkhZyVrfoVidQjZoKYP7I/edit?usp=sharing]
+https://docs.google.com/spreadsheets/d/1Q3bwKUq7Aer1BsMPRhfGDShkhZyVrfoVidQjZoKYP7I/edit?usp=sharing
 
 Link a nuestro video:
-[]
