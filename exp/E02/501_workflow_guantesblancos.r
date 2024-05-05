@@ -17,12 +17,12 @@ envg$EXPENV <- list()
 envg$EXPENV$exp_dir <- "~/buckets/b1/exp/"
 envg$EXPENV$wf_dir <- "~/buckets/b1/flow/"
 envg$EXPENV$wf_dir_local <- "~/flow/"
-envg$EXPENV$repo_dir <- "~/labo2024v1/"
+envg$EXPENV$repo_dir <- "~/lab1-mcd-austral/"
 envg$EXPENV$datasets_dir <- "~/buckets/b1/datasets/"
 envg$EXPENV$arch_sem <- "mis_semillas.txt"
 
 # default
-envg$EXPENV$gcloud$RAM <- 64
+envg$EXPENV$gcloud$RAM <- 256
 envg$EXPENV$gcloud$cCPU <- 8
 
 #------------------------------------------------------------------------------
@@ -50,7 +50,7 @@ setwd( envg$EXPENV$wf_dir_local )
 #------------------------------------------------------------------------------
 # cargo la  "libreria" de los experimentos
 
-exp_lib <- paste0( envg$EXPENV$repo_dir,"/exp/02EC/z590_exp_lib_01.r")
+exp_lib <- paste0( envg$EXPENV$repo_dir,"/exp/E02/z590_exp_lib_01.r")
 source( exp_lib )
 
 #------------------------------------------------------------------------------
@@ -64,7 +64,7 @@ DT_incorporar_dataset_default <- function( pmyexp, parch, pserver="local")
   if( -1 == (param_local <- exp_init_datos( pmyexp, parch, pserver ))$resultado ) return( 0 )# linea fija
 
 
-  param_local$meta$script <- "/exp/02EC/z511_DT_incorporar_dataset.r"
+  param_local$meta$script <- "/exp/E02/z511_DT_incorporar_dataset.r"
 
   param_local$primarykey <- c("numero_de_cliente", "foto_mes" )
   param_local$entity_id <- c("numero_de_cliente" )
@@ -84,7 +84,7 @@ CA_catastrophe_default <- function( pmyexp, pinputexps, pserver="local")
   if( -1 == (param_local <- exp_init( pmyexp, pinputexps, pserver ))$resultado ) return( 0 )# linea fija
 
 
-  param_local$meta$script <- "/exp/02EC/z521_CA_reparar_dataset.r"
+  param_local$meta$script <- "/exp/E02/z521_CA_reparar_dataset.r"
 
   # Opciones MachineLearning EstadisticaClasica Ninguno
   param_local$metodo <- "MachineLearning" # MachineLearning EstadisticaClasica Ninguno
@@ -104,13 +104,13 @@ DR_drifting_guantesblancos <- function( pmyexp, pinputexps, pserver="local")
   if( -1 == (param_local <- exp_init( pmyexp, pinputexps, pserver ))$resultado ) return( 0 )# linea fija
 
 
-  param_local$meta$script <- "/exp/02EC/z531_DR_corregir_drifting.r"
+  param_local$meta$script <- "/exp/E02/z531_DR_corregir_drifting.r"
 
   # No me engraso las manos con Feature Engineering manual
   param_local$variables_intrames <- TRUE
   # valores posibles
   #  "ninguno", "rank_simple", "rank_cero_fijo", "deflacion", "estandarizar"
-  param_local$metodo <- "rank_simple"
+  param_local$metodo <- "rank_cero_fijo"
 
   return( exp_correr_script( param_local ) ) # linea fija
 }
@@ -125,7 +125,7 @@ FE_historia_guantesblancos <- function( pmyexp, pinputexps, pserver="local")
   if( -1 == (param_local <- exp_init( pmyexp, pinputexps, pserver ))$resultado ) return( 0 )# linea fija
 
 
-  param_local$meta$script <- "/exp/02EC/z541_FE_historia.r"
+  param_local$meta$script <- "/exp/E02/z541_FE_historia.r"
 
   param_local$lag1 <- TRUE
   param_local$lag2 <- FALSE # no me engraso con los lags de orden 2
@@ -144,7 +144,7 @@ FE_historia_guantesblancos <- function( pmyexp, pinputexps, pserver="local")
   # no me engraso las manos con las tendencias de segundo orden
   param_local$Tendencias2$run <- FALSE
   param_local$Tendencias2$ventana <- 6
-  param_local$Tendencias2$tendencia <- TRUE
+  param_local$Tendencias2$tendencia <- FALSE
   param_local$Tendencias2$minimo <- FALSE
   param_local$Tendencias2$maximo <- FALSE
   param_local$Tendencias2$promedio <- FALSE
@@ -155,8 +155,8 @@ FE_historia_guantesblancos <- function( pmyexp, pinputexps, pserver="local")
   # No me engraso las manos con las variables nuevas agregadas por un RF
   # esta parte demora mucho tiempo en correr, y estoy en modo manos_limpias
   param_local$RandomForest$run <- TRUE
-  param_local$RandomForest$num.trees <- 30
-  param_local$RandomForest$max.depth <- 5
+  param_local$RandomForest$num.trees <- 20
+  param_local$RandomForest$max.depth <- 4
   param_local$RandomForest$min.node.size <- 1000
   param_local$RandomForest$mtry <- 40
 
@@ -177,14 +177,14 @@ TS_strategy_guantesblancos_202109 <- function( pmyexp, pinputexps, pserver="loca
 {
   if( -1 == (param_local <- exp_init( pmyexp, pinputexps, pserver ))$resultado ) return( 0 )# linea fija
 
-  param_local$meta$script <- "/exp/02EC/z551_TS_training_strategy.r"
+  param_local$meta$script <- "/exp/E02/z551_TS_training_strategy.r"
 
 
   param_local$future <- c(202109)
-  param_local$final_train <- c(202107, 202106, 202105, 202104, 202103)
+  param_local$final_train <- c(202107, 202106, 202105, 202104, 202103, 202102, 202101, 202012, 202011)
 
 
-  param_local$train$training <- c(202105, 202104, 202103,202102,202101)
+  param_local$train$training <- c(202105, 202104, 202103, 202102, 202101, 202012, 202011, 202010, 202009)
   param_local$train$validation <- c(202106)
   param_local$train$testing <- c(202107)
 
@@ -203,14 +203,13 @@ TS_strategy_guantesblancos_202107 <- function( pmyexp, pinputexps, pserver="loca
 {
   if( -1 == (param_local <- exp_init( pmyexp, pinputexps, pserver ))$resultado ) return( 0 )# linea fija
 
-  param_local$meta$script <- "/exp/02EC/z551_TS_training_strategy.r"
+  param_local$meta$script <- "/exp/E02/z551_TS_training_strategy.r"
 
 
   param_local$future <- c(202107)
-  param_local$final_train <- c(202105, 202104, 202103, 202102, 202101)
-
-
-  param_local$train$training <- c(202103, 202102, 202101, 202012, 202011)
+  param_local$final_train <- c(202105, 202104, 202103, 202102, 202101, 202012, 202011, 202010, 202009)
+  
+  param_local$train$training <- c(202103, 202102, 202101, 202012, 202011, 202010, 202009, 202008, 202007)
   param_local$train$validation <- c(202104)
   param_local$train$testing <- c(202105)
 
@@ -230,7 +229,7 @@ HT_tuning_guantesblancos <- function( pmyexp, pinputexps, pserver="local")
 {
   if( -1 == (param_local <- exp_init( pmyexp, pinputexps, pserver ))$resultado ) return( 0 )# linea fija
 
-  param_local$meta$script <- "/exp/02EC/z561_HT_lightgbm.r"
+  param_local$meta$script <- "/exp/E02/z561_HT_lightgbm.r"
 
   # En caso que se haga cross validation, se usa esta cantidad de folds
   param_local$lgb_crossvalidation_folds <- 5
@@ -268,7 +267,7 @@ HT_tuning_guantesblancos <- function( pmyexp, pinputexps, pserver="local")
 
     extra_trees = FALSE,
     # White Gloves Bayesian Optimization, with a happy narrow exploration
-    learning_rate = c( 0.02, 0.8 ),
+    learning_rate = c( 0.01, 0.8 ),
     feature_fraction = c( 0.5, 0.9 ),
     num_leaves = c( 8L, 2048L,  "integer" ),
     min_data_in_leaf = c( 100L, 2000L, "integer" )
@@ -276,7 +275,7 @@ HT_tuning_guantesblancos <- function( pmyexp, pinputexps, pserver="local")
 
 
   # una Beyesian de Guantes Blancos, solo hace 15 iteraciones
-  param_local$bo_iteraciones <- 100 # iteraciones de la Optimizacion Bayesiana
+  param_local$bo_iteraciones <- 50 # iteraciones de la Optimizacion Bayesiana
 
   return( exp_correr_script( param_local ) ) # linea fija
 }
@@ -287,7 +286,7 @@ ZZ_final_guantesblancos <- function( pmyexp, pinputexps, pserver="local")
 {
   if( -1 == (param_local <- exp_init( pmyexp, pinputexps, pserver ))$resultado ) return( 0 )# linea fija
 
-  param_local$meta$script <- "/exp/02EC/z571_ZZ_final.r"
+  param_local$meta$script <- "/exp/E02/z571_ZZ_final.r"
 
   # Que modelos quiero, segun su posicion en el ranking e la Bayesian Optimizacion, ordenado por ganancia descendente
   param_local$modelos_rank <- c(1)
