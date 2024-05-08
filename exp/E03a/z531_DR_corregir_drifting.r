@@ -46,7 +46,6 @@ GrabarOutput <- function() {
 
 AgregarVariables_IntraMes <- function(dataset) {
   gc()
-
   # INICIO de la seccion donde se deben hacer cambios con variables nuevas
 
   # creo un ctr_quarter que tenga en cuenta cuando
@@ -114,7 +113,24 @@ AgregarVariables_IntraMes <- function(dataset) {
   dataset[, vm_mpagominimo := rowSums(cbind(Master_mpagominimo, Visa_mpagominimo), na.rm = TRUE)]
 
   # a partir de aqui juego con la suma de Mastercard y Visa
-    # Experimento 3a
+  dataset[, vmr_Master_mlimitecompra := Master_mlimitecompra / vm_mlimitecompra]
+  dataset[, vmr_Visa_mlimitecompra := Visa_mlimitecompra / vm_mlimitecompra]
+  dataset[, vmr_msaldototal := vm_msaldototal / vm_mlimitecompra]
+  dataset[, vmr_msaldopesos := vm_msaldopesos / vm_mlimitecompra]
+  dataset[, vmr_msaldopesos2 := vm_msaldopesos / vm_msaldototal]
+  dataset[, vmr_msaldodolares := vm_msaldodolares / vm_mlimitecompra]
+  dataset[, vmr_msaldodolares2 := vm_msaldodolares / vm_msaldototal]
+  dataset[, vmr_mconsumospesos := vm_mconsumospesos / vm_mlimitecompra]
+  dataset[, vmr_mconsumosdolares := vm_mconsumosdolares / vm_mlimitecompra]
+  dataset[, vmr_madelantopesos := vm_madelantopesos / vm_mlimitecompra]
+  dataset[, vmr_madelantodolares := vm_madelantodolares / vm_mlimitecompra]
+  dataset[, vmr_mpagado := vm_mpagado / vm_mlimitecompra]
+  dataset[, vmr_mpagospesos := vm_mpagospesos / vm_mlimitecompra]
+  dataset[, vmr_mpagosdolares := vm_mpagosdolares / vm_mlimitecompra]
+  dataset[, vmr_mconsumototal := vm_mconsumototal / vm_mlimitecompra]
+  dataset[, vmr_mpagominimo := vm_mpagominimo / vm_mlimitecompra]
+
+  # Aqui debe usted agregar sus propias nuevas variables
   dataset[,p_saldo_cc := mcuentas_saldo/ccuenta_corriente]
   dataset[,p_saldo_ca := mcuentas_saldo/ccaja_ahorro]
   dataset[,p_saldo_ctas := mcuentas_saldo/(ccaja_ahorro + ccuenta_corriente)]
@@ -127,10 +143,10 @@ AgregarVariables_IntraMes <- function(dataset) {
 
   # Calcular p_ponderado_transeferencias
   dataset$p_ponderado_transeferencias <- ifelse(dataset$denominador != 0,
-                                               (dataset$mtransferencias_recibidas * dataset$ctransferencias_recibidas +
-                                                  dataset$mtransferencias_emitidas * dataset$ctransferencias_emitidas) /
-                                                 dataset$denominador,
-                                               0)
+                                             (dataset$mtransferencias_recibidas * dataset$ctransferencias_recibidas +
+                                                dataset$mtransferencias_emitidas * dataset$ctransferencias_emitidas) /
+                                               dataset$denominador,
+                                             0)
 
   # Eliminar la columna de auxiliar de denominador si ya no la necesitas
   dataset <- subset(dataset, select = -c(denominador))
@@ -163,8 +179,7 @@ AgregarVariables_IntraMes <- function(dataset) {
     ccajas_depositos +
     ccajas_extracciones +
     ccajas_otras
-
-  ) > 0 ,1, 0)]  
+    ) > 0 ,1, 0)]
   dataset[,t_montos := mrentabilidad+mrentabilidad_annual+mcomisiones+mactivos_margen+mpasivos_margen+mcuenta_corriente_adicional+mcuenta_corriente+mcaja_ahorro+mcaja_ahorro_adicional+mcaja_ahorro_dolares+mcuentas_saldo+mautoservicio+mtarjeta_visa_consumo+mtarjeta_master_consumo+mprestamos_personales+mprestamos_prendarios+mprestamos_hipotecarios+mplazo_fijo_dolares+mplazo_fijo_pesos+minversion1_pesos+minversion1_dolares+minversion2+mpayroll+mpayroll2+mcuenta_debitos_automaticos+mttarjeta_master_debitos_automaticos+mpagodeservicios+mpagomiscuentas+mcajeros_propios_descuentos+mtarjeta_visa_descuentos+mtarjeta_master_descuentos+mcomisiones_mantenimiento+mcomisiones_otras+mforex_buy+mforex_sell+mtransferencias_recibidas+mtransferencias_emitidas+mextraccion_autoservicio+mcheques_depositados+mcheques_emitidos+mcheques_depositados_rechazados+mcheques_emitidos_rechazados+matm+Master_mfinanciacion_limite+Master_msaldototal+Master_msaldopesos+Master_msaldodolares+Master_mconsumospesos+Master_mconsumosdolares+Master_mlimitecompra+Master_madelantopesos+Master_madelantodolares+Master_mpagado+Master_mpagospesos+Master_mpagosdolares+Master_mconsumototal+Master_mpagominimo]
   dataset[,d_ca_negativa := ifelse( (mcaja_ahorro) > 0 ,1, 0)]
   dataset[,d_cc_negativa := ifelse( (mcuenta_corriente ) > 0 ,1, 0)]
@@ -183,11 +198,9 @@ AgregarVariables_IntraMes <- function(dataset) {
   dataset[,d_perfil_tipico_baja_2 := ifelse((mcuenta_corriente_adicional | mprestamos_prendarios | mprestamos_hipotecarios | mplazo_fijo_pesos | minversion1_pesos | minversion1_dolares | minversion2 | mpayroll2 | cpayroll2_trx | mpagodeservicios | mcajeros_propios_descuentos | mtarjeta_visa_descuentos | mtarjeta_master_descuentos | mcomisiones_mantenimiento | mforex_buy | mforex_sell | Master_msaldodolares | Master_mconsumosdolares | Master_madelantopesos | Master_cadelantosefectivo | Visa_mconsumosdolares | Visa_madelantopesos | Visa_cadelantosefectivo),0,1)]
   dataset[,d_visa_finiciomora := ifelse(Visa_Finiciomora> 30,1,0)]
   dataset[, t_descuentos := (mtarjeta_visa_descuentos + mtarjeta_master_descuentos) / 
-            (ctarjeta_visa_descuentos + ctarjeta_master_descuentos)]
+          (ctarjeta_visa_descuentos + ctarjeta_master_descuentos)]
   
-  dummys <- colnames(dataset)
-  dummys <- dummys[dummys %like% "^(d_)"]
-  print(paste("nro dummys:", length(dummys)," al terminar de agregar las variables"))
+  
   
   # valvula de seguridad para evitar valores infinitos
   # paso los infinitos a NULOS
@@ -204,10 +217,7 @@ AgregarVariables_IntraMes <- function(dataset) {
     )
     dataset[mapply(is.infinite, dataset)] <- NA
   }
-  dummys <- colnames(dataset)
-  dummys <- dummys[dummys %like% "^(d_)"]
-  print(paste("nro dummys:", length(dummys)," luego de aplicar lo de los infinitos dentro de la función"))
-  
+
 
   # valvula de seguridad para evitar valores NaN  que es 0/0
   # paso los NaN a 0 , decision polemica si las hay
@@ -227,9 +237,6 @@ AgregarVariables_IntraMes <- function(dataset) {
     cat("Si no te gusta la decision, modifica a gusto el programa!\n\n")
     dataset[mapply(is.nan, dataset)] <- 0
   }
-  dummys <- colnames(dataset)
-  dummys <- dummys[dummys %like% "^(d_)"]
-  print(paste("nro dummys:", length(dummys)," luego de aplicar lo de los nan justo cuando termina la funcion"))
   return(dataset)
 }
 #------------------------------------------------------------------------------
@@ -333,19 +340,12 @@ GrabarOutput()
 write_yaml(PARAM, file = "parametros.yml") # escribo parametros utilizados
 
 # primero agrego las variables manuales
-print("*****************************************************************")
-print("#################################################################")
-print("ejecuto la función AgregarVariables_IntraMes")
 if (PARAM$variables_intrames){
   dataset <- AgregarVariables_IntraMes(dataset)
 } 
 
-dummys <- colnames(dataset)
-dummys <- dummys[dummys %like% "^(d_)"]
-print(paste("nro dummys:", length(dummys)," al terminar la funcion AgregarVariables_IntraMes"))
 # ordeno dataset
 setorderv(dataset, PARAM$dataset_metadata$primarykey)
-
 
 # por como armé los nombres de campos,
 #  estos son los campos que expresan variables monetarias
@@ -353,11 +353,8 @@ campos_monetarios <- colnames(dataset)
 campos_monetarios <- campos_monetarios[campos_monetarios %like%
   "^(m|Visa_m|Master_m|vm_m|p_|t_)"]
 
-
-
 # aqui aplico un metodo para atacar el data drifting
 # hay que probar experimentalmente cual funciona mejor
-
 switch(PARAM$metodo,
   "ninguno"        = cat("No hay correccion del data drifting"),
   "rank_simple"    = drift_rank_simple(campos_monetarios),
@@ -365,6 +362,7 @@ switch(PARAM$metodo,
   "deflacion"      = drift_deflacion(campos_monetarios),
   "estandarizar"   = drift_estandarizar(campos_monetarios)
 )
+
 
 #------------------------------------------------------------------------------
 # grabo el dataset
@@ -375,12 +373,9 @@ fwrite(dataset,
   sep = ","
 )
 
-
-
 # copia la metadata sin modificar
 write_yaml( PARAM$dataset_metadata, 
   file="dataset_metadata.yml" )
-
 
 #------------------------------------------------------------------------------
 
@@ -402,17 +397,11 @@ fwrite(tb_campos,
   sep = "\t"
 )
 
-print("despues de guardar los campos")
-print(length(names(dataset)))
-
 #------------------------------------------------------------------------------
 OUTPUT$dataset$ncol <- ncol(dataset)
 OUTPUT$dataset$nrow <- nrow(dataset)
 OUTPUT$time$end <- format(Sys.time(), "%Y%m%d %H%M%S")
 GrabarOutput()
-
-print("despues del grabar output")
-print(length(names(dataset)))
 
 # dejo la marca final
 cat(format(Sys.time(), "%Y%m%d %H%M%S"), "\n",
