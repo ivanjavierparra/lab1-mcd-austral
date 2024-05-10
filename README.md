@@ -10,11 +10,16 @@ Alumnos:
 
 Este repositorio contiene los scripts en R asociados a los experimentos realizados.
 A continuación indicamos lo que contiene cada carpeta:
-- exp: contiene los experimentos.
-- workflow-01: contiene los scripts base de la cátedra.
+- exp: contiene los experimentos. Cada carpeta es un experimento.
+- semillas: contiene un txt con nuestras semillas originales.
+- wilcoxon: contiene código utilizado para hacer el test de wilcoxon y los resultados en formato xlsx y csv.
+- workflow-alumnos: contiene el workflow baseline definido por los alumnos para ejecutar los experimentos colaborativos.
+- workflow-catedra: contiene el workflow base definido por la cátedra.
 
+Link a nuestro diccionario de datos: <br>
+https://docs.google.com/spreadsheets/d/11X42WX22rbkOdGpiIZSasvSwWw9gnZMl05SaeFDj6yU/edit?usp=drive_link
 
-Link a nuestro diccionario de datos:
-https://docs.google.com/spreadsheets/d/1Q3bwKUq7Aer1BsMPRhfGDShkhZyVrfoVidQjZoKYP7I/edit?usp=sharing
+Link al documento explicativo para agregar variables manuales: <br>
+https://docs.google.com/document/d/1CJw60bGPzCKmNPKAJvbfulvdURxHmXhF_6nf7G8MFJE/edit?usp=sharing
 
-Link a nuestro video:
+Link a nuestro video: <br>
