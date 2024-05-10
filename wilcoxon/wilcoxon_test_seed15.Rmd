@@ -1,0 +1,62 @@
+---
+title: "wilcoxon_seed15"
+output: html_document
+date: "2024-05-10"
+---
+```{r setup, include=FALSE}
+# Configuración general
+knitr::opts_chunk$set(echo = TRUE)
+options(warn = -1)  # Esto suprime todos los warnings
+```
+```{r}
+require(dplyr)
+require(readr)
+
+dt <- kaggle_seed15 <- read_delim("kaggle_seed15.csv",
+                                  delim = ";", escape_double = FALSE, 
+                                  col_types = cols(semilla = col_double()))
+dt_E01 <- filter(dt,exp=="E01")
+
+dt_E3B <- filter(dt,exp=="E03B")
+
+wtest <- function(vector1,vector2){
+  return (wilcox.test(vector1, vector2, alternative = "two.sided")$p.value)
+}
+
+```
+# Test wilcoxon por nro envío E01 vs E03b
+
+```{r}
+# test wilcoxon por nro envío
+options(scipen = 100, digits = 8)
+wilcoxon <- list()
+envios <- c("e9500","e10000","e10500","e11000","e11500")
+for (envio in envios){
+  wilcoxon[envio] <- wtest(dt_E01[[envio]],dt_E3B[[envio]])
+}
+wilcoxon <- data.frame(wilcoxon)
+wilcoxon <- data.frame(t(wilcoxon[-1]))
+wilcoxon$Estimulo <- rownames(wilcoxon)
+names(wilcoxon) <- c("p_value","Estimulos")
+wilcoxon
+```
+```{r}
+# maximo de E01
+E01P <- list()
+for (envio in envios){E01P[envio] <- mean(dt_E01[[envio]])}
+names(E01P)[which.max(as.numeric(E01P))]
+```
+```{r}
+# maximo de E03B
+E03BP <- list()
+for (envio in envios){E03BP[envio] <- mean(dt_E3B[[envio]])}
+names(E03BP)[which.max(as.numeric(E03BP))]
+```
+
+```{r}
+# Test de Wilcoxon para los mejores envios de cada Experimento
+resultado_final <- wtest(dt_E01$e11500,dt_E3B$e10000)
+resultado_final
+
+```
+
