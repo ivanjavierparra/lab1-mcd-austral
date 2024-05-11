@@ -10,6 +10,8 @@ Alumnos:
 
 Este repositorio contiene los scripts en R asociados a los experimentos realizados.
 A continuación indicamos lo que contiene cada carpeta:
+- documentacion: tiene el diccionario de datos de nuestras variables manuales, un pdf con los pasos para incorporar las variables y los cambios ue hicimos, y las tablas y gráficos que están en el ppt compartido de google.
+- errores: contiene capturas de pantalla de errores y warnings que nos generó el archivo original de DR al momento de incorporar nuestras variables.
 - exp: contiene los experimentos. Cada carpeta es un experimento.
 - semillas: contiene un txt con nuestras semillas originales.
 - wilcoxon: contiene código utilizado para hacer el test de wilcoxon y los resultados en formato xlsx y csv.
