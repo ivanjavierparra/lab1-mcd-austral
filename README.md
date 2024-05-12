@@ -25,3 +25,4 @@ Link al documento explicativo para agregar variables manuales: <br>
 https://docs.google.com/document/d/1CJw60bGPzCKmNPKAJvbfulvdURxHmXhF_6nf7G8MFJE/edit?usp=sharing
 
 Link a nuestro video: <br>
+https://youtu.be/zK0s8LnxKgg
